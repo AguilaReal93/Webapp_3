@@ -1,1022 +1,1011 @@
 <!DOCTYPE html>
 <html lang="ca">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="App ReUse - Comparteix i reutilitza objectes">
-    <title>ReUse</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --green-dark:   #1b5e20;
-            --green-main:   #2e7d32;
-            --green-mid:    #43a047;
-            --green-light:  #a5d6a7;
-            --green-pale:   #e8f5e9;
-            --green-bg:     #f1f8f1;
-            --white:        #ffffff;
-            --text-dark:    #1a2e1a;
-            --text-mid:     #4a6349;
-            --text-light:   #7a9b79;
-            --card-shadow:  0 2px 16px rgba(46,125,50,0.10);
-            --radius-lg:    18px;
-            --radius-md:    12px;
-            --radius-sm:    8px;
-            --orange:       #e65100;
-            --orange-light: #fff3e0;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
-        html, body {
-            height: 100%;
-            font-family: 'DM Sans', sans-serif;
-            background: var(--green-bg);
-            color: var(--text-dark);
-            overflow: hidden;
-        }
-
-        /* ── PHONE SHELL (desktop preview) ── */
-        .phone-shell {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-        }
-
-        .phone {
-            width: 390px;
-            height: 844px;
-            background: var(--green-bg);
-            border-radius: 48px;
-            box-shadow: 0 32px 80px rgba(0,0,0,0.28), 0 0 0 8px #1a2e1a;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-
-        /* On mobile, fill the screen */
-        @media (max-width: 430px) {
-            .phone-shell { background: var(--green-bg); }
-            .phone {
-                width: 100%;
-                height: 100%;
-                border-radius: 0;
-                box-shadow: none;
-            }
-        }
-
-        /* ── TOP BAR ── */
-        #superior {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 20px 14px;
-            background: var(--green-main);
-            flex-shrink: 0;
-            position: relative;
-        }
-
-        #superior .logo-wrap {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        #superior .logo-icon {
-            width: 32px; height: 32px;
-            background: white;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 18px;
-        }
-
-        #superior .logo-text {
-            font-family: 'Nunito', sans-serif;
-            font-weight: 900;
-            font-size: 22px;
-            color: white;
-            letter-spacing: 1px;
-        }
-
-        #superior .top-actions {
-            display: flex; gap: 8px;
-        }
-
-        #superior .top-icon-btn {
-            width: 34px; height: 34px;
-            background: rgba(255,255,255,0.18);
-            border: none; border-radius: 50%;
-            color: white; font-size: 16px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer;
-        }
-
-        /* back button inside topbar */
-        #superior .back-btn {
-            background: none; border: none; color: white;
-            font-size: 20px; cursor: pointer; padding: 0 4px;
-            display: none;
-        }
-
-        /* ── SECTIONS ── */
-        .seccio {
-            flex: 1;
-            display: none;
-            flex-direction: column;
-            overflow-y: auto;
-            overflow-x: hidden;
-            -webkit-overflow-scrolling: touch;
-            padding-bottom: 0;
-        }
-
-        .seccio.activa { display: flex; }
-
-        /* ── HOME / BENVINGUDA ── */
-        #seccio_home {
-            align-items: center;
-            justify-content: center;
-            padding: 40px 30px;
-            background: linear-gradient(180deg, var(--green-pale) 0%, var(--white) 100%);
-        }
-
-        .home-brand {
-            display: flex; flex-direction: column; align-items: center; gap: 6px;
-            margin-bottom: 40px;
-        }
-
-        .home-brand .big-icon {
-            width: 90px; height: 90px;
-            background: var(--green-main);
-            border-radius: 28px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 44px;
-            box-shadow: 0 8px 30px rgba(46,125,50,0.3);
-            animation: bounceIn 0.7s ease;
-        }
-
-        @keyframes bounceIn {
-            0%   { transform: scale(0.5); opacity: 0; }
-            70%  { transform: scale(1.08); }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        .home-brand h1 {
-            font-family: 'Nunito', sans-serif;
-            font-weight: 900; font-size: 38px;
-            color: var(--green-main); letter-spacing: 2px;
-            margin-top: 12px;
-        }
-
-        .home-brand .tagline {
-            font-size: 14px; color: var(--text-mid); font-weight: 500;
-            letter-spacing: 0.3px; text-align: center;
-        }
-
-        .home-actions { display: flex; flex-direction: column; gap: 14px; width: 100%; }
-
-        .btn-primary {
-            width: 100%; padding: 16px;
-            background: var(--green-main);
-            color: white; border: none;
-            border-radius: var(--radius-md); font-size: 16px; font-weight: 700;
-            font-family: 'Nunito', sans-serif;
-            cursor: pointer; letter-spacing: 0.5px;
-            transition: transform 0.15s, box-shadow 0.15s;
-            box-shadow: 0 4px 14px rgba(46,125,50,0.35);
-        }
-
-        .btn-primary:active { transform: scale(0.97); }
-
-        .btn-secondary {
-            width: 100%; padding: 16px;
-            background: white; color: var(--green-main);
-            border: 2px solid var(--green-light);
-            border-radius: var(--radius-md); font-size: 16px; font-weight: 700;
-            font-family: 'Nunito', sans-serif;
-            cursor: pointer; letter-spacing: 0.5px;
-            transition: transform 0.15s, background 0.15s;
-        }
-
-        .btn-secondary:active { transform: scale(0.97); background: var(--green-pale); }
-
-        /* ── FORM SCREENS (login / register) ── */
-        .form-screen {
-            padding: 28px 24px;
-            background: white;
-        }
-
-        .form-screen h2 {
-            font-family: 'Nunito', sans-serif;
-            font-weight: 800; font-size: 24px;
-            color: var(--text-dark); margin-bottom: 6px;
-        }
-
-        .form-screen .sub {
-            color: var(--text-light); font-size: 14px; margin-bottom: 28px;
-        }
-
-        .field-group { display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px; }
-
-        .field-wrap { display: flex; flex-direction: column; gap: 6px; }
-
-        .field-wrap label {
-            font-size: 12px; font-weight: 600; color: var(--text-mid);
-            text-transform: uppercase; letter-spacing: 0.6px;
-        }
-
-        .field-wrap input, .field-wrap select {
-            padding: 14px 16px;
-            border: 1.5px solid #d4e8d4;
-            border-radius: var(--radius-md);
-            font-size: 15px; font-family: 'DM Sans', sans-serif;
-            color: var(--text-dark);
-            background: var(--green-bg);
-            outline: none;
-            transition: border-color 0.2s;
-            width: 100%;
-        }
-
-        .field-wrap input:focus, .field-wrap select:focus {
-            border-color: var(--green-mid);
-            background: white;
-        }
-
-        .link-row {
-            text-align: center; margin-top: 16px;
-            font-size: 14px; color: var(--text-mid);
-        }
-
-        .link-row span {
-            color: var(--green-main); font-weight: 700; cursor: pointer;
-        }
-
-        /* ── FEED ── */
-        #seccio_feed { background: var(--green-bg); }
-
-        .feed-header {
-            padding: 18px 20px 12px;
-            background: white;
-        }
-
-        .feed-header h2 {
-            font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 20px;
-            color: var(--text-dark);
-        }
-
-        .search-bar {
-            display: flex; align-items: center; gap: 10px;
-            background: var(--green-bg);
-            border-radius: var(--radius-md);
-            padding: 10px 14px; margin-top: 12px;
-            border: 1.5px solid #d4e8d4;
-        }
-
-        .search-bar span { font-size: 18px; }
-        .search-bar input {
-            border: none; background: none; outline: none;
-            font-size: 14px; color: var(--text-dark);
-            font-family: 'DM Sans', sans-serif; flex: 1;
-        }
-
-        .cat-pills {
-            display: flex; gap: 8px; overflow-x: auto; padding: 14px 20px 2px;
-            scrollbar-width: none;
-        }
-        .cat-pills::-webkit-scrollbar { display: none; }
-
-        .pill {
-            white-space: nowrap; padding: 7px 16px;
-            border-radius: 20px; font-size: 13px; font-weight: 600;
-            border: 1.5px solid var(--green-light); background: white;
-            color: var(--text-mid); cursor: pointer; transition: all 0.2s;
-        }
-
-        .pill.active { background: var(--green-main); color: white; border-color: var(--green-main); }
-
-        .feed-list { padding: 10px 16px 80px; display: flex; flex-direction: column; gap: 14px; }
-
-        .item-card {
-            background: white; border-radius: var(--radius-lg);
-            box-shadow: var(--card-shadow);
-            overflow: hidden; display: flex; gap: 0;
-            transition: transform 0.15s;
-        }
-
-        .item-card:active { transform: scale(0.985); }
-
-        .item-card .item-img {
-            width: 100px; height: 100px;
-            background: var(--green-pale);
-            flex-shrink: 0;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 38px;
-        }
-
-        .item-card .item-body {
-            padding: 12px 14px; flex: 1;
-            display: flex; flex-direction: column; justify-content: space-between;
-        }
-
-        .item-card .item-title {
-            font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 16px;
-            color: var(--text-dark);
-        }
-
-        .item-card .item-user {
-            font-size: 12px; color: var(--text-light); margin-top: 2px;
-        }
-
-        .item-card .item-footer {
-            display: flex; align-items: center; justify-content: space-between;
-            margin-top: 8px;
-        }
-
-        .badge {
-            font-size: 11px; font-weight: 700; padding: 3px 10px;
-            border-radius: 20px; letter-spacing: 0.3px;
-        }
-
-        .badge-nou    { background: #e3f2fd; color: #1565c0; }
-        .badge-poc    { background: var(--green-pale); color: var(--green-dark); }
-        .badge-usat   { background: #fff3e0; color: #e65100; }
-
-        .btn-contact {
-            font-size: 12px; font-weight: 700; padding: 6px 12px;
-            background: var(--green-pale); color: var(--green-main);
-            border: none; border-radius: var(--radius-sm); cursor: pointer;
-            font-family: 'DM Sans', sans-serif;
-            transition: background 0.2s;
-        }
-
-        .btn-contact:active { background: var(--green-light); }
-
-        /* ── AFEGIR OBJECTE ── */
-        #seccio_afegir { background: white; }
-
-        .afegir-header {
-            padding: 22px 24px 16px;
-            border-bottom: 1px solid var(--green-pale);
-        }
-
-        .afegir-header h2 {
-            font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 22px;
-        }
-
-        .upload-zone {
-            margin: 20px 24px;
-            border: 2px dashed var(--green-light);
-            border-radius: var(--radius-lg);
-            padding: 32px 20px;
-            text-align: center;
-            background: var(--green-bg);
-            cursor: pointer;
-            transition: border-color 0.2s, background 0.2s;
-        }
-
-        .upload-zone:active { background: var(--green-pale); border-color: var(--green-mid); }
-
-        .upload-zone .upload-icon { font-size: 40px; margin-bottom: 10px; }
-        .upload-zone p { font-size: 14px; color: var(--text-mid); font-weight: 500; }
-        .upload-zone small { font-size: 12px; color: var(--text-light); }
-
-        .form-inner { padding: 0 24px 100px; display: flex; flex-direction: column; gap: 16px; }
-
-        .estat-group { display: flex; gap: 8px; flex-wrap: wrap; }
-
-        .estat-btn {
-            flex: 1; min-width: 80px; padding: 10px 8px;
-            border-radius: var(--radius-md); border: 1.5px solid var(--green-light);
-            background: white; font-size: 13px; font-weight: 700;
-            color: var(--text-mid); cursor: pointer; text-align: center;
-            transition: all 0.2s;
-        }
-
-        .estat-btn.sel { background: var(--green-main); color: white; border-color: var(--green-main); }
-
-        /* ── PERFIL ── */
-        #seccio_perfil { background: var(--green-bg); }
-
-        .perfil-header {
-            background: var(--green-main);
-            padding: 28px 24px 40px;
-            display: flex; flex-direction: column; align-items: center; gap: 10px;
-        }
-
-        .avatar {
-            width: 72px; height: 72px; border-radius: 50%;
-            background: var(--green-light);
-            border: 3px solid white;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 32px;
-        }
-
-        .perfil-name {
-            font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 22px;
-            color: white;
-        }
-
-        .perfil-handle { font-size: 13px; color: rgba(255,255,255,0.7); }
-
-        .perfil-card {
-            background: white; border-radius: var(--radius-lg);
-            margin: -20px 16px 0; padding: 20px;
-            box-shadow: var(--card-shadow);
-        }
-
-        .perfil-stats {
-            display: flex; justify-content: space-around; margin-bottom: 20px;
-        }
-
-        .stat-item { text-align: center; }
-        .stat-num {
-            font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 22px;
-            color: var(--green-main);
-        }
-        .stat-label { font-size: 11px; color: var(--text-light); margin-top: 2px; }
-
-        .perfil-divider { height: 1px; background: var(--green-pale); margin: 0 0 16px; }
-
-        .objectes-title {
-            font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 16px;
-            margin-bottom: 12px; color: var(--text-dark);
-        }
-
-        .my-item {
-            display: flex; align-items: center; gap: 12px;
-            padding: 12px; border-radius: var(--radius-md);
-            background: var(--green-bg); margin-bottom: 10px;
-        }
-
-        .my-item .my-img {
-            width: 52px; height: 52px; border-radius: var(--radius-sm);
-            background: var(--green-pale); flex-shrink: 0;
-            display: flex; align-items: center; justify-content: center; font-size: 24px;
-        }
-
-        .my-item .my-body { flex: 1; }
-        .my-item .my-name {
-            font-weight: 700; font-size: 14px; color: var(--text-dark);
-        }
-
-        .estat-dot {
-            display: inline-flex; align-items: center; gap: 5px;
-            font-size: 12px; font-weight: 600; margin-top: 3px;
-        }
-
-        .dot {
-            width: 8px; height: 8px; border-radius: 50%;
-        }
-
-        .dot-disponible { background: #43a047; }
-        .dot-reservat   { background: #f9a825; }
-        .dot-donat      { background: #1565c0; }
-        .dot-no         { background: #e53935; }
-
-        .my-item-actions { display: flex; flex-direction: column; gap: 6px; }
-
-        .btn-estat {
-            font-size: 11px; font-weight: 700; padding: 5px 10px;
-            border: none; border-radius: var(--radius-sm);
-            background: var(--green-pale); color: var(--green-main);
-            cursor: pointer;
-        }
-
-        /* ── BOTTOM NAV ── */
-        #menu {
-            display: flex; justify-content: space-around;
-            background: white;
-            border-top: 1px solid #e0ede0;
-            padding: 8px 0 12px;
-            flex-shrink: 0;
-            position: relative; z-index: 10;
-        }
-
-        .nav-btn {
-            display: flex; flex-direction: column; align-items: center; gap: 3px;
-            background: none; border: none; cursor: pointer;
-            padding: 4px 16px; border-radius: var(--radius-md);
-            transition: transform 0.15s;
-            position: relative;
-        }
-
-        .nav-btn:active { transform: scale(0.9); }
-
-        .nav-icon {
-            font-size: 22px; line-height: 1;
-            transition: transform 0.2s;
-        }
-
-        .nav-label {
-            font-size: 10px; font-weight: 700;
-            color: var(--text-light); letter-spacing: 0.3px;
-            text-transform: uppercase;
-            font-family: 'Nunito', sans-serif;
-        }
-
-        .nav-btn.active .nav-icon { transform: translateY(-2px); }
-        .nav-btn.active .nav-label { color: var(--green-main); }
-
-        /* center add button */
-        .nav-add-wrap {
-            display: flex; align-items: center; justify-content: center;
-        }
-
-        .nav-add-btn {
-            width: 52px; height: 52px;
-            background: var(--green-main);
-            border-radius: 50%; border: none;
-            color: white; font-size: 26px;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 14px rgba(46,125,50,0.4);
-            cursor: pointer;
-            margin-top: -18px;
-            transition: transform 0.15s, box-shadow 0.15s;
-        }
-
-        .nav-add-btn:active { transform: scale(0.92); box-shadow: 0 2px 8px rgba(46,125,50,0.3); }
-
-        /* modal overlay */
-        .modal-overlay {
-            display: none; position: absolute; inset: 0;
-            background: rgba(0,0,0,0.5); z-index: 50;
-            align-items: flex-end; justify-content: center;
-        }
-
-        .modal-overlay.open { display: flex; }
-
-        .modal-sheet {
-            background: white; border-radius: 24px 24px 0 0;
-            padding: 28px 24px 36px;
-            width: 100%; animation: slideUp 0.3s ease;
-        }
-
-        @keyframes slideUp {
-            from { transform: translateY(100%); }
-            to   { transform: translateY(0); }
-        }
-
-        .modal-handle {
-            width: 40px; height: 4px; background: #d0d0d0;
-            border-radius: 2px; margin: 0 auto 20px;
-        }
-
-        .modal-sheet h3 {
-            font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 18px;
-            margin-bottom: 16px; text-align: center;
-        }
-
-        .modal-btns { display: flex; flex-direction: column; gap: 10px; }
-
-        .modal-btn-donat {
-            padding: 14px; border-radius: var(--radius-md); border: none;
-            font-size: 15px; font-weight: 700; font-family: 'Nunito', sans-serif;
-            cursor: pointer;
-        }
-
-        .modal-btn-donat.donat      { background: #e3f2fd; color: #1565c0; }
-        .modal-btn-donat.reservat   { background: #fff8e1; color: #f57f17; }
-        .modal-btn-donat.no         { background: #fce4ec; color: #c62828; }
-        .modal-btn-donat.cancel     { background: var(--green-pale); color: var(--green-main); }
-
-        /* toast */
-        .toast {
-            position: absolute; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
-            background: var(--text-dark); color: white;
-            padding: 12px 22px; border-radius: 30px;
-            font-size: 14px; font-weight: 600;
-            opacity: 0; transition: all 0.3s; pointer-events: none; white-space: nowrap;
-            z-index: 100;
-        }
-
-        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-        /* hide menu on home/login/register */
-        .hide-menu + #menu,
-        .no-menu { display: none !important; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>ReUse</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --g-dark:  #1b5e20;
+  --g-main:  #2e7d32;
+  --g-mid:   #43a047;
+  --g-light: #a5d6a7;
+  --g-pale:  #e8f5e9;
+  --g-bg:    #f1f8f1;
+  --white:   #ffffff;
+  --t-dark:  #1a2e1a;
+  --t-mid:   #4a6349;
+  --t-light: #7a9b79;
+  --shadow:  0 2px 16px rgba(46,125,50,0.12);
+  --r-lg: 18px; --r-md: 12px; --r-sm: 8px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--g-bg);color:var(--t-dark);overflow:hidden}
+
+/* ── SHELL ── */
+.shell{
+  display:flex;flex-direction:column;
+  height:100dvh;width:100%;max-width:430px;
+  margin:0 auto;background:var(--g-bg);
+  position:relative;overflow:hidden;
+}
+
+@media(min-width:600px){
+  body{
+    background:linear-gradient(135deg,#c8e6c9,#81c784);
+    display:flex;align-items:center;justify-content:center;
+    min-height:100vh;overflow:auto;padding:24px;
+  }
+  .shell{
+    width:390px;height:min(844px,92vh);
+    border-radius:46px;
+    box-shadow:0 40px 100px rgba(0,0,0,.35),0 0 0 10px #1a2e1a;
+    overflow:hidden;
+  }
+}
+
+/* ── TOPBAR ── */
+#bar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 18px;background:var(--g-main);
+  flex-shrink:0;z-index:20;min-height:56px;
+}
+.logo-row{display:flex;align-items:center;gap:8px}
+.logo-icon{width:34px;height:34px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.logo-txt{font-family:'Nunito',sans-serif;font-weight:900;font-size:22px;color:#fff;letter-spacing:1px}
+#back-btn{
+  background:rgba(255,255,255,.2);border:none;color:#fff;
+  width:34px;height:34px;border-radius:50%;font-size:18px;
+  cursor:pointer;display:none;align-items:center;justify-content:center;
+  flex-shrink:0;margin-right:4px;transition:background .2s;
+}
+#back-btn:active{background:rgba(255,255,255,.4)}
+.bar-actions{display:flex;gap:8px}
+.bar-btn{
+  width:36px;height:36px;background:rgba(255,255,255,.18);
+  border:none;border-radius:50%;color:#fff;font-size:18px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:background .2s;position:relative;
+}
+.bar-btn:active{background:rgba(255,255,255,.4)}
+.nbadge{
+  position:absolute;top:-2px;right:-2px;width:17px;height:17px;
+  background:#e53935;border-radius:50%;font-size:9px;color:#fff;
+  font-weight:700;display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--g-main);
+}
+
+/* ── SECTIONS ── */
+.sec{flex:1;display:none;flex-direction:column;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;min-height:0}
+.sec.on{display:flex}
+
+/* ── HOME ── */
+#s-home{align-items:center;justify-content:center;padding:40px 28px;background:linear-gradient(160deg,var(--g-pale),#fff)}
+.brand{display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:44px}
+.brand-icon{
+  width:96px;height:96px;background:var(--g-main);border-radius:28px;
+  display:flex;align-items:center;justify-content:center;font-size:50px;
+  box-shadow:0 8px 32px rgba(46,125,50,.35);animation:pop .6s ease;
+}
+@keyframes pop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.07)}100%{transform:scale(1);opacity:1}}
+.brand h1{font-family:'Nunito',sans-serif;font-weight:900;font-size:40px;color:var(--g-main);letter-spacing:2px;margin-top:12px}
+.brand .tag{font-size:14px;color:var(--t-mid);font-weight:500;text-align:center;line-height:1.6}
+.home-btns{display:flex;flex-direction:column;gap:12px;width:100%}
+
+/* ── BUTTONS ── */
+.btn-p{
+  width:100%;padding:15px;background:var(--g-main);color:#fff;border:none;
+  border-radius:var(--r-md);font-size:16px;font-weight:700;font-family:'Nunito',sans-serif;
+  cursor:pointer;letter-spacing:.4px;transition:transform .15s,box-shadow .15s;
+  box-shadow:0 4px 14px rgba(46,125,50,.35);min-height:52px;
+}
+.btn-p:active{transform:scale(.97)}
+.btn-s{
+  width:100%;padding:15px;background:#fff;color:var(--g-main);
+  border:2px solid var(--g-light);border-radius:var(--r-md);
+  font-size:16px;font-weight:700;font-family:'Nunito',sans-serif;
+  cursor:pointer;transition:transform .15s,background .15s;min-height:52px;
+}
+.btn-s:active{transform:scale(.97);background:var(--g-pale)}
+
+/* ── FORMS ── */
+.form-sec{padding:28px 22px;background:#fff}
+.form-sec h2{font-family:'Nunito',sans-serif;font-weight:800;font-size:24px;margin-bottom:4px}
+.form-sec .sub{color:var(--t-light);font-size:14px;margin-bottom:24px}
+.fgroup{display:flex;flex-direction:column;gap:14px;margin-bottom:22px}
+.fwrap{display:flex;flex-direction:column;gap:5px}
+.fwrap label{font-size:11px;font-weight:700;color:var(--t-mid);text-transform:uppercase;letter-spacing:.7px}
+.fwrap input,.fwrap select,.fwrap textarea{
+  padding:13px 15px;border:1.5px solid #d4e8d4;border-radius:var(--r-md);
+  font-size:15px;font-family:'DM Sans',sans-serif;color:var(--t-dark);
+  background:var(--g-bg);outline:none;transition:border-color .2s;width:100%;min-height:50px;
+}
+.fwrap textarea{min-height:80px;resize:none;line-height:1.5}
+.fwrap input:focus,.fwrap select:focus,.fwrap textarea:focus{border-color:var(--g-mid);background:#fff}
+.link-row{text-align:center;margin-top:18px;font-size:14px;color:var(--t-mid)}
+.link-row span{color:var(--g-main);font-weight:700;cursor:pointer;text-decoration:underline}
+
+/* ── FEED ── */
+#s-feed{background:var(--g-bg)}
+.feed-top{padding:14px 18px 10px;background:#fff;flex-shrink:0}
+.feed-top h2{font-family:'Nunito',sans-serif;font-weight:800;font-size:20px}
+.search{
+  display:flex;align-items:center;gap:10px;background:var(--g-bg);
+  border-radius:var(--r-md);padding:10px 14px;margin-top:10px;
+  border:1.5px solid #d4e8d4;transition:border-color .2s;
+}
+.search:focus-within{border-color:var(--g-mid)}
+.search input{border:none;background:none;outline:none;font-size:14px;color:var(--t-dark);font-family:'DM Sans',sans-serif;flex:1}
+
+.pills{display:flex;gap:8px;overflow-x:auto;padding:12px 18px 4px;scrollbar-width:none;flex-shrink:0}
+.pills::-webkit-scrollbar{display:none}
+.pill{
+  white-space:nowrap;padding:7px 16px;border-radius:20px;font-size:13px;font-weight:600;
+  border:1.5px solid var(--g-light);background:#fff;color:var(--t-mid);
+  cursor:pointer;transition:all .2s;min-height:36px;
+}
+.pill.on{background:var(--g-main);color:#fff;border-color:var(--g-main)}
+
+.feed-list{padding:10px 14px 16px;display:flex;flex-direction:column;gap:12px}
+
+.card{
+  background:#fff;border-radius:var(--r-lg);box-shadow:var(--shadow);
+  overflow:hidden;display:flex;cursor:pointer;
+  transition:transform .15s,box-shadow .15s;
+}
+.card:active{transform:scale(.985)}
+.card:hover{box-shadow:0 4px 24px rgba(46,125,50,.18)}
+.card-img{
+  width:100px;height:100px;background:var(--g-pale);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:42px;overflow:hidden;
+}
+.card-img img{width:100%;height:100%;object-fit:cover}
+.card-body{padding:12px 14px;flex:1;display:flex;flex-direction:column;justify-content:space-between;min-width:0}
+.card-title{font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-desc{font-size:12px;color:var(--t-light);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-user{font-size:12px;color:var(--t-light);margin-top:1px}
+.card-foot{display:flex;align-items:center;justify-content:space-between;margin-top:8px;gap:8px}
+.badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;flex-shrink:0}
+.b-nou{background:#e3f2fd;color:#1565c0}
+.b-poc{background:var(--g-pale);color:var(--g-dark)}
+.b-usat{background:#fff3e0;color:#e65100}
+.btn-c{
+  font-size:12px;font-weight:700;padding:7px 12px;
+  background:var(--g-pale);color:var(--g-main);
+  border:none;border-radius:var(--r-sm);cursor:pointer;
+  font-family:'DM Sans',sans-serif;white-space:nowrap;min-height:34px;
+  transition:background .2s;
+}
+.btn-c:active{background:var(--g-light)}
+
+/* ── DETAIL ── */
+#s-detail{background:#fff}
+.det-img{width:100%;aspect-ratio:4/3;background:var(--g-pale);display:flex;align-items:center;justify-content:center;font-size:90px;overflow:hidden;flex-shrink:0}
+.det-img img{width:100%;height:100%;object-fit:cover}
+.det-body{padding:18px 20px 30px}
+.det-title{font-family:'Nunito',sans-serif;font-weight:900;font-size:22px}
+.det-user-row{display:flex;align-items:center;gap:10px;margin:10px 0}
+.det-av{width:38px;height:38px;border-radius:50%;background:var(--g-pale);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.det-uname{font-weight:700;font-size:14px}
+.det-date{font-size:12px;color:var(--t-light)}
+.det-desc{font-size:14px;color:var(--t-mid);line-height:1.7;margin:12px 0}
+.det-acts{display:flex;gap:10px;margin-top:16px}
+.det-acts .btn-p{flex:2}
+.btn-fav{
+  width:52px;height:52px;border-radius:var(--r-md);background:var(--g-pale);
+  border:none;font-size:22px;cursor:pointer;display:flex;align-items:center;
+  justify-content:center;flex-shrink:0;transition:background .2s;
+}
+.btn-fav.liked{background:#fce4ec}
+
+/* ── AFEGIR ── */
+#s-add{background:#fff}
+.add-head{padding:18px 22px 14px;border-bottom:1px solid var(--g-pale);flex-shrink:0}
+.add-head h2{font-family:'Nunito',sans-serif;font-weight:800;font-size:22px}
+.add-head p{font-size:13px;color:var(--t-light);margin-top:4px}
+.upload-zone{
+  margin:16px 20px;border:2px dashed var(--g-light);border-radius:var(--r-lg);
+  padding:28px 16px;text-align:center;background:var(--g-bg);
+  cursor:pointer;transition:all .2s;position:relative;overflow:hidden;
+}
+.upload-zone:hover{background:var(--g-pale);border-color:var(--g-mid)}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0}
+.upload-icon{font-size:40px;margin-bottom:10px}
+.upload-zone p{font-size:14px;color:var(--t-mid);font-weight:600}
+.upload-zone small{font-size:12px;color:var(--t-light)}
+.prev-row{display:flex;gap:10px;padding:0 20px 4px;overflow-x:auto;scrollbar-width:none}
+.prev-row::-webkit-scrollbar{display:none}
+.thumb-wrap{position:relative;flex-shrink:0}
+.thumb{width:72px;height:72px;border-radius:var(--r-md);object-fit:cover;border:2px solid var(--g-light)}
+.del-thumb{
+  position:absolute;top:-6px;right:-6px;width:20px;height:20px;
+  background:#e53935;color:#fff;border-radius:50%;border:none;
+  font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+}
+.form-inner{padding:4px 20px 100px;display:flex;flex-direction:column;gap:16px}
+.estat-grp{display:flex;gap:8px;flex-wrap:wrap}
+.estat-btn{
+  flex:1;min-width:70px;padding:10px 6px;border-radius:var(--r-md);
+  border:1.5px solid var(--g-light);background:#fff;font-size:13px;font-weight:700;
+  color:var(--t-mid);cursor:pointer;text-align:center;transition:all .2s;min-height:44px;
+}
+.estat-btn.sel{background:var(--g-main);color:#fff;border-color:var(--g-main)}
+
+/* ── XATS ── */
+#s-xats{background:var(--g-bg)}
+.xats-head{padding:14px 18px 10px;background:#fff;flex-shrink:0}
+.xats-head h2{font-family:'Nunito',sans-serif;font-weight:800;font-size:20px}
+.chat-list{display:flex;flex-direction:column}
+.chat-row{
+  display:flex;align-items:center;gap:12px;padding:14px 18px;
+  background:#fff;border-bottom:1px solid var(--g-pale);cursor:pointer;
+  transition:background .15s;min-height:72px;
+}
+.chat-row:active{background:var(--g-bg)}
+.chat-av{width:50px;height:50px;border-radius:50%;background:var(--g-pale);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:24px;position:relative}
+.online-dot{position:absolute;bottom:1px;right:1px;width:12px;height:12px;border-radius:50%;background:#43a047;border:2px solid #fff}
+.chat-body{flex:1;min-width:0}
+.chat-name{font-weight:700;font-size:15px}
+.chat-prev{font-size:13px;color:var(--t-light);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chat-meta{text-align:right;flex-shrink:0}
+.chat-time{font-size:11px;color:var(--t-light)}
+.chat-unread{background:var(--g-main);color:#fff;width:20px;height:20px;border-radius:50%;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;margin:4px 0 0 auto}
+
+/* ── PERFIL ── */
+#s-perfil{background:var(--g-bg)}
+.perf-head{background:var(--g-main);padding:24px 22px 44px;display:flex;flex-direction:column;align-items:center;gap:8px;flex-shrink:0}
+.av-wrap{position:relative;cursor:pointer}
+.av{width:78px;height:78px;border-radius:50%;background:var(--g-light);border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-size:36px;overflow:hidden}
+.av img{width:100%;height:100%;object-fit:cover}
+.av-edit{position:absolute;bottom:0;right:0;width:26px;height:26px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.perf-name{font-family:'Nunito',sans-serif;font-weight:800;font-size:22px;color:#fff}
+.perf-handle{font-size:13px;color:rgba(255,255,255,.7)}
+.perf-edit-btn{background:rgba(255,255,255,.2);border:none;color:#fff;padding:7px 18px;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;margin-top:4px;min-height:36px;transition:background .2s}
+.perf-edit-btn:active{background:rgba(255,255,255,.4)}
+.perf-card{background:#fff;border-radius:var(--r-lg);margin:-22px 14px 0;padding:20px;box-shadow:var(--shadow)}
+.stats{display:flex;justify-content:space-around;margin-bottom:18px}
+.stat{text-align:center}
+.stat-n{font-family:'Nunito',sans-serif;font-weight:900;font-size:24px;color:var(--g-main)}
+.stat-l{font-size:11px;color:var(--t-light);margin-top:2px;font-weight:600}
+.divider{height:1px;background:var(--g-pale);margin:0 0 16px}
+.sec-title{font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;margin-bottom:12px}
+.my-item{display:flex;align-items:center;gap:12px;padding:12px;border-radius:var(--r-md);background:var(--g-bg);margin-bottom:10px;min-height:70px}
+.my-img{width:52px;height:52px;border-radius:var(--r-sm);background:var(--g-pale);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:24px;overflow:hidden}
+.my-img img{width:100%;height:100%;object-fit:cover}
+.my-body{flex:1;min-width:0}
+.my-name{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.estat-row{display:inline-flex;align-items:center;gap:5px;margin-top:3px}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.d-disp{background:#43a047}.d-res{background:#f9a825}.d-don{background:#1565c0}.d-no{background:#e53935}
+.btn-estat{font-size:11px;font-weight:700;padding:7px 12px;border:none;border-radius:var(--r-sm);background:var(--g-pale);color:var(--g-main);cursor:pointer;min-height:34px;white-space:nowrap;flex-shrink:0}
+
+/* ── EDIT PERFIL ── */
+#s-edit{background:#fff;padding:28px 22px}
+#s-edit h2{font-family:'Nunito',sans-serif;font-weight:800;font-size:24px;margin-bottom:4px}
+#s-edit .sub{color:var(--t-light);font-size:14px;margin-bottom:22px}
+.edit-av-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:20px}
+.edit-av{width:90px;height:90px;border-radius:50%;border:3px solid var(--g-light);display:flex;align-items:center;justify-content:center;font-size:42px;background:var(--g-pale);overflow:hidden;cursor:pointer;position:relative}
+.edit-av img{width:100%;height:100%;object-fit:cover}
+.edit-av input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0}
+.edit-av-label{font-size:13px;color:var(--g-main);font-weight:700;cursor:pointer}
+
+/* ── NAV ── */
+#nav{
+  display:flex;justify-content:space-around;align-items:center;
+  background:#fff;border-top:1px solid #e0ede0;
+  padding:8px 4px max(12px,env(safe-area-inset-bottom,12px));
+  flex-shrink:0;z-index:20;
+  box-shadow:0 -2px 12px rgba(0,0,0,.06);
+}
+.nb{
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  background:none;border:none;cursor:pointer;padding:6px 10px;
+  border-radius:var(--r-md);transition:transform .15s;flex:1;min-height:52px;
+}
+.nb:active{transform:scale(.88)}
+.ni-wrap{position:relative;display:flex;align-items:center;justify-content:center}
+.ni{font-size:24px;line-height:1;transition:transform .2s;display:block}
+.nl{font-size:10px;font-weight:700;color:var(--t-light);letter-spacing:.3px;text-transform:uppercase;font-family:'Nunito',sans-serif;white-space:nowrap}
+.nb.on .ni{transform:translateY(-1px)}
+.nb.on .nl{color:var(--g-main)}
+.ndot{position:absolute;top:-3px;right:-3px;width:8px;height:8px;background:#e53935;border-radius:50%;border:2px solid #fff;display:none}
+.ndot.show{display:block}
+.nav-add-wrap{display:flex;align-items:center;justify-content:center;flex:1}
+.nav-add{
+  width:54px;height:54px;background:var(--g-main);border-radius:50%;border:none;
+  color:#fff;font-size:28px;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 16px rgba(46,125,50,.45);cursor:pointer;margin-top:-18px;
+  transition:transform .15s,box-shadow .15s;
+}
+.nav-add:active{transform:scale(.90);box-shadow:0 2px 8px rgba(46,125,50,.3)}
+
+/* ── MODALS ── */
+.overlay{
+  display:none;position:absolute;inset:0;background:rgba(0,0,0,.5);
+  z-index:50;align-items:flex-end;justify-content:center;backdrop-filter:blur(2px);
+}
+.overlay.open{display:flex}
+.sheet{
+  background:#fff;border-radius:24px 24px 0 0;
+  padding:24px 22px max(32px,env(safe-area-inset-bottom,32px));
+  width:100%;animation:up .3s ease;max-height:88vh;overflow-y:auto;
+}
+@keyframes up{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.handle{width:40px;height:4px;background:#d0d0d0;border-radius:2px;margin:0 auto 18px}
+.sheet h3{font-family:'Nunito',sans-serif;font-weight:800;font-size:18px;margin-bottom:16px}
+.mbtns{display:flex;flex-direction:column;gap:10px}
+.mbtn{
+  padding:15px;border-radius:var(--r-md);border:none;font-size:15px;
+  font-weight:700;font-family:'Nunito',sans-serif;cursor:pointer;
+  display:flex;align-items:center;gap:12px;min-height:52px;transition:opacity .2s;text-align:left;
+}
+.mbtn:active{opacity:.75}
+.mbtn.disp{background:var(--g-pale);color:var(--g-main)}
+.mbtn.don{background:#e3f2fd;color:#1565c0}
+.mbtn.res{background:#fff8e1;color:#f57f17}
+.mbtn.nodisp{background:#fce4ec;color:#c62828}
+.mbtn.cancel{background:#f5f5f5;color:#555}
+
+/* Notifs */
+.notif-item{display:flex;align-items:flex-start;gap:12px;padding:14px 0;border-bottom:1px solid var(--g-pale)}
+.notif-item:last-child{border-bottom:none}
+.notif-ico{width:40px;height:40px;border-radius:50%;background:var(--g-pale);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.notif-title{font-weight:700;font-size:14px}
+.notif-sub{font-size:12px;color:var(--t-light);margin-top:2px}
+.notif-time{font-size:11px;color:var(--t-light);margin-top:4px}
+
+/* Settings */
+.sett-item{display:flex;align-items:center;justify-content:space-between;padding:15px 0;border-bottom:1px solid var(--g-pale);cursor:pointer;min-height:60px}
+.sett-item:last-child{border-bottom:none}
+.sett-left{display:flex;align-items:center;gap:12px}
+.sett-ico{width:38px;height:38px;border-radius:var(--r-sm);background:var(--g-pale);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.sett-name{font-weight:600;font-size:15px}
+.sett-sub{font-size:12px;color:var(--t-light);margin-top:1px}
+.sett-arr{font-size:18px;color:var(--t-light)}
+.toggle{width:46px;height:26px;border-radius:13px;background:#ddd;border:none;cursor:pointer;position:relative;transition:background .3s;flex-shrink:0}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .3s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.toggle.on{background:var(--g-main)}
+.toggle.on::after{left:23px}
+
+/* Toast */
+.toast{
+  position:absolute;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:#1a2e1a;color:#fff;padding:12px 22px;border-radius:30px;
+  font-size:14px;font-weight:600;opacity:0;transition:all .3s;pointer-events:none;
+  white-space:nowrap;z-index:100;max-width:90%;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Empty */
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 30px;gap:14px;flex:1}
+.empty-ico{font-size:54px}
+.empty-t{font-family:'Nunito',sans-serif;font-weight:800;font-size:20px}
+.empty-s{font-size:14px;color:var(--t-light);text-align:center;line-height:1.5}
+
+/* Scrollbar */
+.sec::-webkit-scrollbar{width:4px}
+.sec::-webkit-scrollbar-thumb{background:var(--g-light);border-radius:2px}
+</style>
 </head>
 <body>
-<div class="phone-shell">
-<div class="phone">
+<div class="shell">
 
-    <!-- TOP BAR -->
-    <div id="superior">
-        <div class="logo-wrap">
-            <button class="back-btn" id="back-btn" onclick="goBack()">←</button>
-            <div class="logo-icon">♻️</div>
-            <span class="logo-text">ReUse</span>
-        </div>
-        <div class="top-actions" id="top-actions">
-            <button class="top-icon-btn">🔔</button>
-            <button class="top-icon-btn">⚙️</button>
-        </div>
+<!-- TOPBAR -->
+<div id="bar">
+  <div class="logo-row">
+    <button id="back-btn" onclick="goBack()" aria-label="Tornar">←</button>
+    <div class="logo-icon">♻️</div>
+    <span class="logo-txt">ReUse</span>
+  </div>
+  <div class="bar-actions">
+    <button class="bar-btn" onclick="openNotifs()" aria-label="Notificacions">
+      🔔<span class="nbadge" id="nbadge">3</span>
+    </button>
+    <button class="bar-btn" onclick="openSettings()" aria-label="Ajustes">⚙️</button>
+  </div>
+</div>
+
+<!-- ① HOME -->
+<div id="s-home" class="sec on">
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:40px 28px;">
+    <div class="brand">
+      <div class="brand-icon">♻️</div>
+      <h1>ReUse</h1>
+      <p class="tag">Comparteix, reutilitza, connecta</p>
     </div>
-
-    <!-- ① BENVINGUDA -->
-    <div id="seccio_home" class="seccio activa" style="background: linear-gradient(160deg,#e8f5e9 0%,#fff 60%);">
-        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:40px 30px;">
-            <div class="home-brand">
-                <div class="big-icon">♻️</div>
-                <h1>ReUse</h1>
-                <p class="tagline">Comparteix, reutilitza, connecta</p>
-            </div>
-
-            <div class="home-actions">
-                <button class="btn-primary" onclick="nav('seccio_login')">Inicia sessió</button>
-                <button class="btn-secondary" onclick="nav('seccio_registre')">Registra't</button>
-            </div>
-
-            <p style="margin-top:32px;font-size:13px;color:var(--text-light);text-align:center;line-height:1.6;">
-                La plataforma per donar una segona<br>vida als objectes que ja no necessites.
-            </p>
-        </div>
+    <div class="home-btns">
+      <button class="btn-p" onclick="nav('s-login')">Inicia sessió</button>
+      <button class="btn-s" onclick="nav('s-reg')">Registra't</button>
     </div>
+    <p style="margin-top:32px;font-size:13px;color:var(--t-light);text-align:center;line-height:1.7;">La plataforma per donar una segona<br>vida als objectes que ja no necessites.</p>
+  </div>
+</div>
 
-    <!-- ② LOGIN -->
-    <div id="seccio_login" class="seccio form-screen">
-        <div style="padding:28px 0 6px;">
-            <h2>Benvingut/da!</h2>
-            <p class="sub">Inicia sessió per continuar</p>
-        </div>
-
-        <div class="field-group">
-            <div class="field-wrap">
-                <label>Correu o nom d'usuari</label>
-                <input type="text" placeholder="exemple@correu.cat">
-            </div>
-            <div class="field-wrap">
-                <label>Contrasenya</label>
-                <input type="password" placeholder="••••••••">
-            </div>
-        </div>
-
-        <button class="btn-primary" onclick="nav('seccio_feed');showToast('✅ Sessió iniciada!')">Entrar</button>
-
-        <div class="link-row">
-            Nou per aquí? <span onclick="nav('seccio_registre')">Registra't</span>
-        </div>
+<!-- ② LOGIN -->
+<div id="s-login" class="sec form-sec">
+  <h2>Benvingut/da! 👋</h2>
+  <p class="sub">Inicia sessió per continuar</p>
+  <div class="fgroup">
+    <div class="fwrap">
+      <label>Correu o nom d'usuari</label>
+      <input id="l-email" type="text" placeholder="exemple@correu.cat">
     </div>
-
-    <!-- ③ REGISTRE -->
-    <div id="seccio_registre" class="seccio form-screen">
-        <div style="padding:28px 0 6px;">
-            <h2>Crea el compte</h2>
-            <p class="sub">Uneix-te a la comunitat ReUse</p>
-        </div>
-
-        <div class="field-group">
-            <div class="field-wrap">
-                <label>Nom d'usuari</label>
-                <input type="text" placeholder="el_teu_nom">
-            </div>
-            <div class="field-wrap">
-                <label>Correu electrònic</label>
-                <input type="email" placeholder="exemple@correu.cat">
-            </div>
-            <div class="field-wrap">
-                <label>Contrasenya</label>
-                <input type="password" placeholder="Mínim 8 caràcters">
-            </div>
-        </div>
-
-        <button class="btn-primary" onclick="nav('seccio_feed');showToast('🎉 Compte creat!')">Registrar-me</button>
-
-        <div class="link-row">
-            Ja tens compte? <span onclick="nav('seccio_login')">Inicia sessió</span>
-        </div>
+    <div class="fwrap">
+      <label>Contrasenya</label>
+      <input id="l-pass" type="password" placeholder="••••••••">
     </div>
+  </div>
+  <button class="btn-p" onclick="doLogin()">Entrar</button>
+  <div class="link-row">Nou per aquí? <span onclick="nav('s-reg')">Registra't</span></div>
+</div>
 
-    <!-- ④ FEED -->
-    <div id="seccio_feed" class="seccio">
-        <div class="feed-header">
-            <h2>Mur de publicacions</h2>
-            <div class="search-bar">
-                <span>🔍</span>
-                <input type="text" placeholder="Cerca objectes...">
-            </div>
-        </div>
-
-        <div class="cat-pills">
-            <div class="pill active" onclick="selPill(this)">Tot</div>
-            <div class="pill" onclick="selPill(this)">Mobles</div>
-            <div class="pill" onclick="selPill(this)">Electrònica</div>
-            <div class="pill" onclick="selPill(this)">Roba</div>
-            <div class="pill" onclick="selPill(this)">Esports</div>
-            <div class="pill" onclick="selPill(this)">Llar</div>
-        </div>
-
-        <div class="feed-list">
-            <div class="item-card">
-                <div class="item-img">🛋️</div>
-                <div class="item-body">
-                    <div>
-                        <div class="item-title">Sofà de 3 places</div>
-                        <div class="item-user">Publicat per Marta de Oliva</div>
-                    </div>
-                    <div class="item-footer">
-                        <span class="badge badge-poc">Poc ús</span>
-                        <button class="btn-contact" onclick="showToast('💬 Missatge enviat!')">Comentar / Contactar</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="item-card">
-                <div class="item-img">📱</div>
-                <div class="item-body">
-                    <div>
-                        <div class="item-title">Mòbil Android</div>
-                        <div class="item-user">Publicat per Jordi</div>
-                    </div>
-                    <div class="item-footer">
-                        <span class="badge badge-nou">Nou</span>
-                        <button class="btn-contact" onclick="showToast('💬 Missatge enviat!')">Comentar / Contactar</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="item-card">
-                <div class="item-img">🚲</div>
-                <div class="item-body">
-                    <div>
-                        <div class="item-title">Bicicleta de muntanya</div>
-                        <div class="item-user">Publicat per Núria</div>
-                    </div>
-                    <div class="item-footer">
-                        <span class="badge badge-usat">Usat</span>
-                        <button class="btn-contact" onclick="showToast('💬 Missatge enviat!')">Comentar / Contactar</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="item-card">
-                <div class="item-img">📚</div>
-                <div class="item-body">
-                    <div>
-                        <div class="item-title">Llibres universitaris</div>
-                        <div class="item-user">Publicat per Pere</div>
-                    </div>
-                    <div class="item-footer">
-                        <span class="badge badge-poc">Poc ús</span>
-                        <button class="btn-contact" onclick="showToast('💬 Missatge enviat!')">Comentar / Contactar</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="item-card">
-                <div class="item-img">🪑</div>
-                <div class="item-body">
-                    <div>
-                        <div class="item-title">Cadira d'oficina</div>
-                        <div class="item-user">Publicat per Laia</div>
-                    </div>
-                    <div class="item-footer">
-                        <span class="badge badge-nou">Nova</span>
-                        <button class="btn-contact" onclick="showToast('💬 Missatge enviat!')">Comentar / Contactar</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+<!-- ③ REGISTRE -->
+<div id="s-reg" class="sec form-sec">
+  <h2>Crea el compte 🌱</h2>
+  <p class="sub">Uneix-te a la comunitat ReUse</p>
+  <div class="fgroup">
+    <div class="fwrap">
+      <label>Nom d'usuari</label>
+      <input id="r-user" type="text" placeholder="el_teu_nom">
     </div>
-
-    <!-- ⑤ AFEGIR OBJECTE -->
-    <div id="seccio_afegir" class="seccio">
-        <div class="afegir-header">
-            <h2>Afegir objecte</h2>
-            <p class="sub" style="margin-top:4px;font-size:13px;color:var(--text-light);">Publica un objecte per compartir-lo</p>
-        </div>
-
-        <div class="upload-zone" onclick="showToast('📷 Càmera no disponible al prototip')">
-            <div class="upload-icon">📷</div>
-            <p>Afegeix fotos de l'objecte</p>
-            <small>Prem per obrir la càmera o galeria</small>
-        </div>
-
-        <div class="form-inner">
-            <div class="field-wrap">
-                <label>Nom de l'objecte</label>
-                <input type="text" placeholder="Ex: Sofà beige 2 places">
-            </div>
-
-            <div class="field-wrap">
-                <label>Categoria</label>
-                <select>
-                    <option value="">Selecciona categoria</option>
-                    <option>Mobles</option>
-                    <option>Electrònica</option>
-                    <option>Roba</option>
-                    <option>Esports</option>
-                    <option>Llar i cuina</option>
-                    <option>Llibres</option>
-                    <option>Altres</option>
-                </select>
-            </div>
-
-            <div class="field-wrap">
-                <label>Estat</label>
-                <div class="estat-group">
-                    <div class="estat-btn sel" onclick="selEstat(this)">Nou</div>
-                    <div class="estat-btn" onclick="selEstat(this)">Poc ús</div>
-                    <div class="estat-btn" onclick="selEstat(this)">Normal</div>
-                    <div class="estat-btn" onclick="selEstat(this)">Usat</div>
-                </div>
-            </div>
-
-            <div class="field-wrap">
-                <label>Descripció</label>
-                <input type="text" placeholder="Detalls, dimensions, color...">
-            </div>
-
-            <button class="btn-primary" onclick="nav('seccio_feed');showToast('✅ Objecte publicat!')">
-                Publicar
-            </button>
-        </div>
+    <div class="fwrap">
+      <label>Correu electrònic</label>
+      <input id="r-email" type="email" placeholder="exemple@correu.cat">
     </div>
-
-    <!-- ⑥ PERFIL -->
-    <div id="seccio_perfil" class="seccio">
-        <div class="perfil-header">
-            <div class="avatar">👤</div>
-            <div class="perfil-name">Miansa</div>
-            <div class="perfil-handle">@uemissa · <span style="color:rgba(255,255,255,0.9);font-weight:700;">✏️ Editar perfil</span></div>
-        </div>
-
-        <div style="padding:0 16px 80px;">
-            <div class="perfil-card">
-                <div class="perfil-stats">
-                    <div class="stat-item">
-                        <div class="stat-num">5</div>
-                        <div class="stat-label">Publicats</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-num">12</div>
-                        <div class="stat-label">Donats</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-num">3</div>
-                        <div class="stat-label">Reservats</div>
-                    </div>
-                </div>
-
-                <div class="perfil-divider"></div>
-
-                <div class="objectes-title">Els meus objectes</div>
-
-                <div class="my-item">
-                    <div class="my-img">🛋️</div>
-                    <div class="my-body">
-                        <div class="my-name">Sofà beige</div>
-                        <div class="estat-dot">
-                            <div class="dot dot-disponible"></div>
-                            <span style="color:var(--green-mid);font-size:12px;">Disponible</span>
-                        </div>
-                    </div>
-                    <div class="my-item-actions">
-                        <button class="btn-estat" onclick="openModal('sofà beige')">Canviar estat</button>
-                    </div>
-                </div>
-
-                <div class="my-item">
-                    <div class="my-img">📱</div>
-                    <div class="my-body">
-                        <div class="my-name">Mòbil Android</div>
-                        <div class="estat-dot">
-                            <div class="dot dot-reservat"></div>
-                            <span style="color:#f9a825;font-size:12px;">Reservat</span>
-                        </div>
-                    </div>
-                    <div class="my-item-actions">
-                        <button class="btn-estat" onclick="openModal('mòbil Android')">Canviar estat</button>
-                    </div>
-                </div>
-
-                <div class="my-item">
-                    <div class="my-img">🚲</div>
-                    <div class="my-body">
-                        <div class="my-name">Bicicleta</div>
-                        <div class="estat-dot">
-                            <div class="dot dot-no"></div>
-                            <span style="color:#e53935;font-size:12px;">No disponible</span>
-                        </div>
-                    </div>
-                    <div class="my-item-actions">
-                        <button class="btn-estat" onclick="openModal('bicicleta')">Canviar estat</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="fwrap">
+      <label>Contrasenya</label>
+      <input id="r-pass" type="password" placeholder="Mínim 8 caràcters">
     </div>
+  </div>
+  <button class="btn-p" onclick="doReg()">Registrar-me</button>
+  <div class="link-row">Ja tens compte? <span onclick="nav('s-login')">Inicia sessió</span></div>
+</div>
 
-    <!-- BOTTOM NAV -->
-    <div id="menu">
-        <button class="nav-btn active" id="nav-home" onclick="nav('seccio_feed');setNav('nav-home')">
-            <span class="nav-icon">🏠</span>
-            <span class="nav-label">Inici</span>
-        </button>
-        <button class="nav-btn" id="nav-cerca" onclick="nav('seccio_feed');setNav('nav-cerca')">
-            <span class="nav-icon">🔍</span>
-            <span class="nav-label">Buscar</span>
-        </button>
-        <div class="nav-add-wrap">
-            <button class="nav-add-btn" onclick="nav('seccio_afegir');setNav('nav-add')">＋</button>
-        </div>
-        <button class="nav-btn" id="nav-msg" onclick="showToast('💬 Missatges pròximament!');setNav('nav-msg')">
-            <span class="nav-icon">💬</span>
-            <span class="nav-label">Xats</span>
-        </button>
-        <button class="nav-btn" id="nav-perfil" onclick="nav('seccio_perfil');setNav('nav-perfil')">
-            <span class="nav-icon">👤</span>
-            <span class="nav-label">Perfil</span>
-        </button>
+<!-- ④ FEED -->
+<div id="s-feed" class="sec">
+  <div class="feed-top">
+    <h2>Mur de publicacions</h2>
+    <div class="search">
+      <span>🔍</span>
+      <input id="feed-search" type="search" placeholder="Cerca objectes...">
     </div>
+  </div>
+  <div class="pills">
+    <div class="pill on" onclick="selPill(this)">Tot</div>
+    <div class="pill" onclick="selPill(this)">Mobles</div>
+    <div class="pill" onclick="selPill(this)">Electrònica</div>
+    <div class="pill" onclick="selPill(this)">Roba</div>
+    <div class="pill" onclick="selPill(this)">Esports</div>
+    <div class="pill" onclick="selPill(this)">Llar</div>
+  </div>
+  <div class="feed-list" id="feed-list"></div>
+</div>
 
-    <!-- MODAL CANVIAR ESTAT -->
-    <div class="modal-overlay" id="estat-modal" onclick="closeModal(event)">
-        <div class="modal-sheet" onclick="event.stopPropagation()">
-            <div class="modal-handle"></div>
-            <h3 id="modal-title">Marcar objecte com a:</h3>
-            <div class="modal-btns">
-                <button class="modal-btn-donat donat"    onclick="setEstat('Donat')">✔ Donat</button>
-                <button class="modal-btn-donat reservat" onclick="setEstat('Reservat')">🕐 Reservat</button>
-                <button class="modal-btn-donat no"       onclick="setEstat('No disponible')">✖ No disponible</button>
-                <button class="modal-btn-donat cancel"   onclick="closeModal()">Cancel·lar</button>
-            </div>
-        </div>
+<!-- ⑤ DETALL -->
+<div id="s-detail" class="sec">
+  <div id="det-content"></div>
+</div>
+
+<!-- ⑥ AFEGIR -->
+<div id="s-add" class="sec">
+  <div class="add-head">
+    <h2>Afegir objecte</h2>
+    <p>Publica un objecte per compartir-lo</p>
+  </div>
+  <label class="upload-zone">
+    <input type="file" accept="image/*" multiple onchange="handleImgs(this)">
+    <div class="upload-icon">📷</div>
+    <p>Afegeix fotos de l'objecte</p>
+    <small>Toca per obrir la càmera o galeria</small>
+  </label>
+  <div class="prev-row" id="prev-row"></div>
+  <div class="form-inner">
+    <div class="fwrap">
+      <label>Nom de l'objecte</label>
+      <input id="a-name" type="text" placeholder="Ex: Sofà beige 2 places">
     </div>
+    <div class="fwrap">
+      <label>Categoria</label>
+      <select id="a-cat">
+        <option value="">Selecciona categoria</option>
+        <option>Mobles</option><option>Electrònica</option><option>Roba</option>
+        <option>Esports</option><option>Llar i cuina</option><option>Llibres</option><option>Altres</option>
+      </select>
+    </div>
+    <div class="fwrap">
+      <label>Estat</label>
+      <div class="estat-grp">
+        <div class="estat-btn sel" onclick="selEstat(this)">Nou</div>
+        <div class="estat-btn" onclick="selEstat(this)">Poc ús</div>
+        <div class="estat-btn" onclick="selEstat(this)">Normal</div>
+        <div class="estat-btn" onclick="selEstat(this)">Usat</div>
+      </div>
+    </div>
+    <div class="fwrap">
+      <label>Descripció</label>
+      <textarea id="a-desc" placeholder="Detalls, dimensions, color, ubicació de recollida..."></textarea>
+    </div>
+    <button class="btn-p" onclick="publishItem()">📢 Publicar</button>
+  </div>
+</div>
 
-    <!-- TOAST -->
-    <div class="toast" id="toast"></div>
+<!-- ⑦ XATS -->
+<div id="s-xats" class="sec">
+  <div class="xats-head"><h2>Missatges</h2></div>
+  <div class="chat-list" id="chat-list"></div>
+</div>
 
-</div><!-- /phone -->
-</div><!-- /phone-shell -->
+<!-- ⑧ PERFIL -->
+<div id="s-perfil" class="sec">
+  <div class="perf-head">
+    <div class="av-wrap" onclick="openEdit()">
+      <div class="av" id="prof-av">👤</div>
+      <div class="av-edit">✏️</div>
+    </div>
+    <div class="perf-name" id="prof-name">Miansa</div>
+    <div class="perf-handle" id="prof-handle">@uemissa</div>
+    <button class="perf-edit-btn" onclick="openEdit()">✏️ Editar perfil</button>
+  </div>
+  <div style="padding:0 14px 100px">
+    <div class="perf-card">
+      <div class="stats">
+        <div class="stat"><div class="stat-n" id="st-pub">5</div><div class="stat-l">Publicats</div></div>
+        <div class="stat"><div class="stat-n" id="st-don">12</div><div class="stat-l">Donats</div></div>
+        <div class="stat"><div class="stat-n" id="st-res">3</div><div class="stat-l">Reservats</div></div>
+      </div>
+      <div class="divider"></div>
+      <div class="sec-title">Els meus objectes</div>
+      <div id="my-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ⑨ EDITAR PERFIL -->
+<div id="s-edit" class="sec">
+  <h2>Editar perfil</h2>
+  <p class="sub">Actualitza la teva informació</p>
+  <div class="edit-av-wrap">
+    <div class="edit-av" id="edit-av">
+      👤
+      <input type="file" accept="image/*" onchange="handleAv(this)">
+    </div>
+    <span class="edit-av-label">Canviar foto</span>
+  </div>
+  <div class="fgroup">
+    <div class="fwrap"><label>Nom</label><input id="e-name" type="text"></div>
+    <div class="fwrap"><label>Nom d'usuari</label><input id="e-handle" type="text"></div>
+    <div class="fwrap"><label>Biografia</label><textarea id="e-bio" placeholder="Explica't..."></textarea></div>
+  </div>
+  <button class="btn-p" onclick="saveProfile()">💾 Desar canvis</button>
+  <div class="link-row"><span onclick="goBack()" style="color:var(--t-light)">Cancel·lar</span></div>
+</div>
+
+<!-- NAV -->
+<nav id="nav" style="display:none">
+  <button class="nb on" id="n-home" onclick="nav('s-feed');setNav('n-home')">
+    <div class="ni-wrap"><span class="ni">🏠</span></div>
+    <span class="nl">Inici</span>
+  </button>
+  <button class="nb" id="n-cerca" onclick="nav('s-feed');setNav('n-cerca');document.getElementById('feed-search').focus()">
+    <div class="ni-wrap"><span class="ni">🔍</span></div>
+    <span class="nl">Buscar</span>
+  </button>
+  <div class="nav-add-wrap">
+    <button class="nav-add" onclick="nav('s-add');setNav('')">＋</button>
+  </div>
+  <button class="nb" id="n-xats" onclick="nav('s-xats');setNav('n-xats');renderChats()">
+    <div class="ni-wrap">
+      <span class="ni">💬</span>
+      <span class="ndot show" id="n-dot-xats"></span>
+    </div>
+    <span class="nl">Xats</span>
+  </button>
+  <button class="nb" id="n-perfil" onclick="nav('s-perfil');setNav('n-perfil')">
+    <div class="ni-wrap"><span class="ni">👤</span></div>
+    <span class="nl">Perfil</span>
+  </button>
+</nav>
+
+<!-- MODAL ESTAT -->
+<div class="overlay" id="m-estat" onclick="closeOverlay('m-estat',event)">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="handle"></div>
+    <h3 id="m-estat-title">Marcar com a:</h3>
+    <div class="mbtns">
+      <button class="mbtn disp"   onclick="setEstat('disponible')">🟢 Disponible</button>
+      <button class="mbtn don"    onclick="setEstat('donat')">✔ Donat</button>
+      <button class="mbtn res"    onclick="setEstat('reservat')">🕐 Reservat</button>
+      <button class="mbtn nodisp" onclick="setEstat('no-disp')">✖ No disponible</button>
+      <button class="mbtn cancel" onclick="closeOverlay('m-estat')">Cancel·lar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL NOTIFS -->
+<div class="overlay" id="m-notifs" onclick="closeOverlay('m-notifs',event)">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="handle"></div>
+    <h3>🔔 Notificacions</h3>
+    <div id="notif-list"></div>
+  </div>
+</div>
+
+<!-- MODAL SETTINGS -->
+<div class="overlay" id="m-settings" onclick="closeOverlay('m-settings',event)">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="handle"></div>
+    <h3>⚙️ Ajustes</h3>
+    <div class="sett-item" onclick="toggleSett('notifs')">
+      <div class="sett-left"><div class="sett-ico">🔔</div><div><div class="sett-name">Notificacions</div><div class="sett-sub">Alertes de missatges</div></div></div>
+      <button class="toggle on" id="tog-notifs"></button>
+    </div>
+    <div class="sett-item" onclick="toggleSett('ubic')">
+      <div class="sett-left"><div class="sett-ico">📍</div><div><div class="sett-name">Ubicació</div><div class="sett-sub">Objectes propers</div></div></div>
+      <button class="toggle on" id="tog-ubic"></button>
+    </div>
+    <div class="sett-item" onclick="toggleSett('emails')">
+      <div class="sett-left"><div class="sett-ico">✉️</div><div><div class="sett-name">Correus electrònics</div><div class="sett-sub">Novetats per mail</div></div></div>
+      <button class="toggle" id="tog-emails"></button>
+    </div>
+    <div class="sett-item" onclick="closeOverlay('m-settings');openEdit()">
+      <div class="sett-left"><div class="sett-ico">👤</div><div><div class="sett-name">Editar perfil</div></div></div>
+      <span class="sett-arr">›</span>
+    </div>
+    <div class="sett-item" onclick="closeOverlay('m-settings');nav('s-home');toast('👋 Sessió tancada')">
+      <div class="sett-left"><div class="sett-ico">🚪</div><div><div class="sett-name" style="color:#c62828">Tancar sessió</div></div></div>
+      <span class="sett-arr" style="color:#c62828">›</span>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+</div>
 
 <script>
-    const SHOW_MENU = ['seccio_feed','seccio_afegir','seccio_perfil'];
-    const SECCIO_TO_NAV = {
-        'seccio_feed':   'nav-home',
-        'seccio_afegir': 'nav-add',
-        'seccio_perfil': 'nav-perfil',
-    };
+// ── STATE ─────────────────────────────
+const S = {
+  hist: [],
+  cur:  's-home',
+  filter: 'Tot',
+  favs: new Set(),
+  modalItem: null,
+  addImgs: [],
+  setts: { notifs:true, ubic:true, emails:false },
+  profile: { name:'Miansa', handle:'uemissa', bio:"M'agrada donar una segona vida als objectes 🌱", img:null, pub:5, don:12, res:3 },
+  myItems: [
+    { id:1, name:'Sofà beige',    emoji:'🛋️', estat:'disponible', img:null },
+    { id:2, name:'Mòbil Android', emoji:'📱', estat:'reservat',   img:null },
+    { id:3, name:'Bicicleta',     emoji:'🚲', estat:'no-disp',    img:null },
+  ],
+  feed: [
+    { id:10, name:'Sofà de 3 places',      emoji:'🛋️', user:'Marta de Oliva', estat:'poc',  desc:'Sofà beix, bon estat, recollida a Granollers.' },
+    { id:11, name:'Mòbil Android',         emoji:'📱', user:'Jordi',           estat:'nou',  desc:'Samsung Galaxy A14, no faig servir.' },
+    { id:12, name:'Bicicleta de muntanya', emoji:'🚲', user:'Núria',           estat:'usat', desc:'BTT 26", canvis Shimano, bon estat.' },
+    { id:13, name:'Llibres universitaris', emoji:'📚', user:'Pere',            estat:'poc',  desc:'Enginyeria informàtica, 1r i 2n curs.' },
+    { id:14, name:"Cadira d'oficina",      emoji:'🪑', user:'Laia',            estat:'nou',  desc:'Ergonòmica, reposacaps, quasi nova.' },
+  ],
+  chats: [
+    { id:1, name:'Marta de Oliva', emoji:'👩', prev:'El sofà encara el tens disponible?', time:'12:30', unread:2, online:true },
+    { id:2, name:'Jordi',          emoji:'👦', prev:'Gràcies! Vinc a buscar-ho demà.',    time:'11:05', unread:0, online:false },
+    { id:3, name:'Núria',          emoji:'👩', prev:"D'acord, t'aviso quan pugui!",       time:'Ahir',  unread:0, online:true },
+  ],
+  notifs: [
+    { ico:'💬', title:'Nou missatge de Marta', sub:'Et pregunta pel sofà beige', time:'Fa 5 min' },
+    { ico:'❤️', title:"A Jordi li agrada el teu objecte", sub:'Bicicleta de muntanya', time:'Fa 1 hora' },
+    { ico:'✅', title:'Objecte marcat com a donat', sub:'Mòbil Android — gràcies!', time:'Ahir' },
+  ],
+};
 
-    function nav(id) {
-        document.querySelectorAll('.seccio').forEach(s => s.classList.remove('activa'));
-        document.getElementById(id).classList.add('activa');
-        document.getElementById('menu').style.display = SHOW_MENU.includes(id) ? 'flex' : 'none';
+const SHOW_NAV = ['s-feed','s-add','s-perfil','s-xats'];
+const NAV_MAP  = { 's-feed':'n-home','s-add':'','s-perfil':'n-perfil','s-xats':'n-xats' };
+const BACK_SEC = ['s-login','s-reg','s-detail','s-add','s-edit'];
 
-        // auto-highlight nav button
-        if (SECCIO_TO_NAV[id]) setNav(SECCIO_TO_NAV[id]);
+// ── NAVIGATION ────────────────────────
+function nav(id, push=true) {
+  if(push && S.cur!==id) S.hist.push(S.cur);
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  const el=document.getElementById(id);
+  if(!el) return;
+  el.classList.add('on');
+  S.cur=id;
+  el.scrollTop=0;
 
-        // back button
-        const backBtn = document.getElementById('back-btn');
-        backBtn.style.display = ['seccio_login','seccio_registre'].includes(id) ? 'inline-block' : 'none';
-    }
+  const navEl=document.getElementById('nav');
+  navEl.style.display=SHOW_NAV.includes(id)?'flex':'none';
 
-    function goBack() { nav('seccio_home'); }
+  const bb=document.getElementById('back-btn');
+  bb.style.display=BACK_SEC.includes(id)?'flex':'none';
 
-    function setNav(id) {
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        const el = document.getElementById(id);
-        if (el) el.classList.add('active');
-    }
+  if(NAV_MAP[id]!==undefined) setNav(NAV_MAP[id]);
+}
 
-    function selPill(el) {
-        document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-        el.classList.add('active');
-    }
+function goBack(){
+  if(S.hist.length>0) nav(S.hist.pop(),false);
+  else nav('s-home',false);
+}
 
-    function selEstat(el) {
-        document.querySelectorAll('.estat-btn').forEach(b => b.classList.remove('sel'));
-        el.classList.add('sel');
-    }
+function setNav(id){
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  if(id){ const el=document.getElementById(id); if(el) el.classList.add('on'); }
+}
 
-    let currentItem = '';
-    function openModal(item) {
-        currentItem = item;
-        document.getElementById('modal-title').textContent = `Marcar "${item}" com a:`;
-        document.getElementById('estat-modal').classList.add('open');
-    }
+// ── FEED ──────────────────────────────
+const BADGE = { nou:'b-nou', poc:'b-poc', usat:'b-usat' };
+const BLBL  = { nou:'Nou', poc:'Poc ús', usat:'Usat' };
+const EMOJIS = { Mobles:['🛋️','🪑'], Electrònica:['📱','💻'], Roba:['👕','👗'], Esports:['🚲','⚽'], Llar:['🏠','🍳'] };
 
-    function closeModal(e) {
-        if (!e || e.target === document.getElementById('estat-modal'))
-            document.getElementById('estat-modal').classList.remove('open');
-    }
+function renderFeed(filter=S.filter){
+  const q=(document.getElementById('feed-search')||{}).value||'';
+  let items=S.feed;
+  if(filter!=='Tot') items=items.filter(i=>(EMOJIS[filter]||[]).includes(i.emoji));
+  if(q.trim()) items=items.filter(i=>i.name.toLowerCase().includes(q.toLowerCase())||i.user.toLowerCase().includes(q.toLowerCase()));
+  const el=document.getElementById('feed-list');
+  if(!el) return;
+  if(!items.length){ el.innerHTML=`<div class="empty"><div class="empty-ico">🔍</div><div class="empty-t">Res per aquí</div><div class="empty-s">Prova amb una altra cerca o categoria.</div></div>`; return; }
+  el.innerHTML=items.map(i=>`
+    <div class="card" onclick="openDetail(${i.id})">
+      <div class="card-img">${i.img?`<img src="${i.img}">`:`${i.emoji}`}</div>
+      <div class="card-body">
+        <div>
+          <div class="card-title">${i.name}</div>
+          <div class="card-desc">${i.desc}</div>
+          <div class="card-user">Publicat per ${i.user}</div>
+        </div>
+        <div class="card-foot">
+          <span class="badge ${BADGE[i.estat]||'b-poc'}">${BLBL[i.estat]||i.estat}</span>
+          <button class="btn-c" onclick="event.stopPropagation();toast('💬 Missatge enviat a ${i.user}!')">💬 Contactar</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
 
-    function setEstat(estat) {
-        document.getElementById('estat-modal').classList.remove('open');
-        showToast(`✅ "${currentItem}" marcat com a ${estat}`);
-    }
+function selPill(el){
+  document.querySelectorAll('.pill').forEach(p=>p.classList.remove('on'));
+  el.classList.add('on');
+  S.filter=el.textContent;
+  renderFeed(S.filter);
+}
 
-    function showToast(msg) {
-        const t = document.getElementById('toast');
-        t.textContent = msg;
-        t.classList.add('show');
-        setTimeout(() => t.classList.remove('show'), 2800);
-    }
+// ── DETAIL ────────────────────────────
+function openDetail(id){
+  const i=S.feed.find(x=>x.id===id);
+  if(!i) return;
+  const fav=S.favs.has(id);
+  document.getElementById('det-content').innerHTML=`
+    <div class="det-img">${i.img?`<img src="${i.img}">`:`${i.emoji}`}</div>
+    <div class="det-body">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+        <div class="det-title">${i.name}</div>
+        <span class="badge ${BADGE[i.estat]||'b-poc'}" style="flex-shrink:0;margin-top:4px">${BLBL[i.estat]||i.estat}</span>
+      </div>
+      <div class="det-user-row">
+        <div class="det-av">👤</div>
+        <div><div class="det-uname">${i.user}</div><div class="det-date">Publicat fa 2 dies · Granollers</div></div>
+      </div>
+      <div class="det-desc">${i.desc}</div>
+      <div class="det-acts">
+        <button class="btn-p" onclick="toast('💬 Missatge enviat a ${i.user}!')">💬 Contactar</button>
+        <button class="btn-fav ${fav?'liked':''}" id="fav-${id}" onclick="toggleFav(${id})">${fav?'❤️':'🤍'}</button>
+      </div>
+    </div>`;
+  nav('s-detail');
+}
 
-    // init: hide menu on home screen
-    document.getElementById('menu').style.display = 'none';
+function toggleFav(id){
+  S.favs.has(id)?S.favs.delete(id):S.favs.add(id);
+  const f=S.favs.has(id);
+  const b=document.getElementById('fav-'+id);
+  if(b){ b.classList.toggle('liked',f); b.textContent=f?'❤️':'🤍'; }
+  toast(f?'❤️ Afegit a favorits!':'💔 Eliminat de favorits');
+}
+
+// ── ADD ITEM ──────────────────────────
+function handleImgs(input){
+  Array.from(input.files).forEach(f=>{
+    const r=new FileReader();
+    r.onload=e=>{ S.addImgs.push(e.target.result); renderPrevs(); };
+    r.readAsDataURL(f);
+  });
+}
+
+function renderPrevs(){
+  const el=document.getElementById('prev-row');
+  if(!el) return;
+  el.innerHTML=S.addImgs.map((s,i)=>`
+    <div class="thumb-wrap">
+      <img class="thumb" src="${s}">
+      <button class="del-thumb" onclick="S.addImgs.splice(${i},1);renderPrevs()">×</button>
+    </div>`).join('');
+}
+
+function selEstat(el){
+  document.querySelectorAll('.estat-btn').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function publishItem(){
+  const name=(document.getElementById('a-name')||{}).value||'';
+  const cat =(document.getElementById('a-cat')||{}).value||'';
+  const desc=(document.getElementById('a-desc')||{}).value||'';
+  const est =(document.querySelector('.estat-btn.sel')||{}).textContent||'Nou';
+  if(!name.trim()){ toast('⚠️ Afegeix un nom a l\'objecte'); return; }
+  const EMAP={Mobles:'🛋️',Electrònica:'📱',Roba:'👕',Esports:'🚲','Llar i cuina':'🏠',Llibres:'📚',Altres:'📦'};
+  const SMAP={Nou:'nou','Poc ús':'poc',Normal:'poc',Usat:'usat'};
+  const it={ id:Date.now(), name:name.trim(), emoji:EMAP[cat]||'📦', user:S.profile.name, estat:SMAP[est]||'poc', desc:desc||'Sense descripció.', img:S.addImgs[0]||null };
+  S.feed.unshift(it);
+  S.myItems.unshift({ id:it.id, name:it.name, emoji:it.emoji, estat:'disponible', img:it.img });
+  S.profile.pub++;
+  document.getElementById('a-name').value='';
+  document.getElementById('a-cat').value='';
+  document.getElementById('a-desc').value='';
+  S.addImgs=[];
+  renderPrevs();
+  document.querySelectorAll('.estat-btn').forEach((b,i)=>b.classList.toggle('sel',i===0));
+  renderFeed(); renderProfile();
+  nav('s-feed');
+  toast('✅ Objecte publicat!');
+}
+
+// ── CHATS ─────────────────────────────
+function renderChats(){
+  const el=document.getElementById('chat-list');
+  if(!el) return;
+  el.innerHTML=S.chats.map(c=>`
+    <div class="chat-row" onclick="toast('💬 Obrint xat amb ${c.name}...')">
+      <div class="chat-av">${c.emoji}${c.online?'<div class="online-dot"></div>':''}</div>
+      <div class="chat-body">
+        <div class="chat-name">${c.name}</div>
+        <div class="chat-prev">${c.prev}</div>
+      </div>
+      <div class="chat-meta">
+        <div class="chat-time">${c.time}</div>
+        ${c.unread>0?`<div class="chat-unread">${c.unread}</div>`:''}
+      </div>
+    </div>`).join('');
+}
+
+// ── PROFILE ───────────────────────────
+function renderProfile(){
+  const p=S.profile;
+  const av=document.getElementById('prof-av');
+  if(av) av.innerHTML=p.img?`<img src="${p.img}">`:'👤';
+  setText('prof-name',p.name); setText('prof-handle','@'+p.handle);
+  setText('st-pub',p.pub); setText('st-don',p.don); setText('st-res',p.res);
+  renderMyItems();
+}
+
+function renderMyItems(){
+  const el=document.getElementById('my-list');
+  if(!el) return;
+  const CFG={
+    disponible:{dot:'d-disp',lbl:'Disponible',col:'var(--g-mid)'},
+    reservat:  {dot:'d-res', lbl:'Reservat',  col:'#f9a825'},
+    donat:     {dot:'d-don', lbl:'Donat',      col:'#1565c0'},
+    'no-disp': {dot:'d-no',  lbl:'No disponible',col:'#e53935'},
+  };
+  el.innerHTML=S.myItems.map(i=>{
+    const c=CFG[i.estat]||CFG.disponible;
+    return `<div class="my-item">
+      <div class="my-img">${i.img?`<img src="${i.img}">`:`${i.emoji}`}</div>
+      <div class="my-body">
+        <div class="my-name">${i.name}</div>
+        <div class="estat-row"><div class="dot ${c.dot}"></div><span style="color:${c.col};font-size:12px;font-weight:600">${c.lbl}</span></div>
+      </div>
+      <button class="btn-estat" onclick="openModal(${i.id})">Canviar estat</button>
+    </div>`;
+  }).join('');
+}
+
+// ── MODALS ────────────────────────────
+function openModal(id){
+  S.modalItem=id;
+  const it=S.myItems.find(x=>x.id===id);
+  if(it) setText('m-estat-title',`Marcar "${it.name}" com a:`);
+  document.getElementById('m-estat').classList.add('open');
+}
+
+function setEstat(estat){
+  closeOverlay('m-estat');
+  const it=S.myItems.find(x=>x.id===S.modalItem);
+  if(it){ it.estat=estat; renderMyItems(); toast(`✅ "${it.name}" marcat com a ${estat}`); }
+}
+
+function openNotifs(){
+  const el=document.getElementById('notif-list');
+  if(el) el.innerHTML=S.notifs.map(n=>`
+    <div class="notif-item">
+      <div class="notif-ico">${n.ico}</div>
+      <div><div class="notif-title">${n.title}</div><div class="notif-sub">${n.sub}</div><div class="notif-time">${n.time}</div></div>
+    </div>`).join('');
+  document.getElementById('nbadge').style.display='none';
+  document.getElementById('m-notifs').classList.add('open');
+}
+
+function openSettings(){
+  document.getElementById('m-settings').classList.add('open');
+}
+
+function closeOverlay(id,e){
+  const el=document.getElementById(id);
+  if(!e||e.target===el) el.classList.remove('open');
+}
+
+function toggleSett(k){
+  S.setts[k]=!S.setts[k];
+  const m={'notifs':'tog-notifs','ubic':'tog-ubic','emails':'tog-emails'};
+  const el=document.getElementById(m[k]);
+  if(el) el.classList.toggle('on',S.setts[k]);
+  toast(S.setts[k]?'✅ Activat':'🔕 Desactivat');
+}
+
+// ── EDIT PROFILE ──────────────────────
+function openEdit(){
+  closeOverlay('m-settings');
+  document.getElementById('e-name').value  =S.profile.name;
+  document.getElementById('e-handle').value=S.profile.handle;
+  document.getElementById('e-bio').value   =S.profile.bio;
+  const av=document.getElementById('edit-av');
+  if(av) av.innerHTML=(S.profile.img?`<img src="${S.profile.img}">`:'👤')+`<input type="file" accept="image/*" onchange="handleAv(this)">`;
+  nav('s-edit');
+}
+
+function handleAv(input){
+  const f=input.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=e=>{
+    S.profile.img=e.target.result;
+    const av=document.getElementById('edit-av');
+    if(av) av.innerHTML=`<img src="${e.target.result}"><input type="file" accept="image/*" onchange="handleAv(this)">`;
+  };
+  r.readAsDataURL(f);
+}
+
+function saveProfile(){
+  S.profile.name  =document.getElementById('e-name').value.trim()||S.profile.name;
+  S.profile.handle=document.getElementById('e-handle').value.trim()||S.profile.handle;
+  S.profile.bio   =document.getElementById('e-bio').value.trim();
+  renderProfile();
+  goBack();
+  toast('✅ Perfil actualitzat!');
+}
+
+// ── AUTH ──────────────────────────────
+function doLogin(){
+  const e=document.getElementById('l-email'),p=document.getElementById('l-pass');
+  if(!e.value.trim()){toast('⚠️ Introdueix el correu');return}
+  if(!p.value){toast('⚠️ Introdueix la contrasenya');return}
+  nav('s-feed'); toast('✅ Sessió iniciada!');
+}
+
+function doReg(){
+  const u=document.getElementById('r-user'),e=document.getElementById('r-email'),p=document.getElementById('r-pass');
+  if(!u.value.trim()){toast("⚠️ Introdueix un nom d'usuari");return}
+  if(!e.value.trim()){toast('⚠️ Introdueix el correu');return}
+  if(!p.value){toast('⚠️ Introdueix la contrasenya');return}
+  S.profile.name=u.value.trim();
+  S.profile.handle=u.value.trim().toLowerCase().replace(/\s/g,'_');
+  nav('s-feed'); toast('🎉 Compte creat!');
+}
+
+// ── UTILS ─────────────────────────────
+function setText(id,txt){ const el=document.getElementById(id); if(el) el.textContent=txt; }
+
+let toastT=null;
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  if(toastT) clearTimeout(toastT);
+  toastT=setTimeout(()=>el.classList.remove('show'),2800);
+}
+
+// ── INIT ──────────────────────────────
+document.addEventListener('DOMContentLoaded',()=>{
+  renderFeed(); renderProfile(); renderChats();
+  document.getElementById('feed-search').addEventListener('input',()=>renderFeed(S.filter));
+  document.getElementById('nav').style.display='none';
+});
 </script>
 </body>
 </html>
